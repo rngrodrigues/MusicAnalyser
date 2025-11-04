@@ -9,13 +9,15 @@ class MainWindow:
         self.root = tk.Tk()
         self.root.title("Top 10 Músicas por Gênero")
 
-        # Carrega arquivo
+        # Carrega arquivo (agora com PySpark)
         self.df = carregar_arquivo()
         if self.df is None:
             return
 
-        # Processa dados (seleção de colunas + top 10)
+        # Processa dados (PySpark → Pandas)
         self.top10_por_genero, self.generos = processar_dados(self.df)
+        if self.top10_por_genero is None:
+            return
 
         # ComboBox
         self.combo_generos = ttk.Combobox(self.root, values=self.generos)
