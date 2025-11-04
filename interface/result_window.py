@@ -1,22 +1,29 @@
+import os
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from core.data_loader import carregar_arquivo
 from core.data_processing import processar_dados
+
 
 class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("Top 10 Músicas por Gênero")
 
+        # Captura o clique no X (evento de fechamento)
+        self.root.protocol("WM_DELETE_WINDOW", self.finalizar)
+
         # Carrega arquivo (agora com PySpark)
         self.df = carregar_arquivo()
         if self.df is None:
+            self.root.destroy()
             return
 
         # Processa dados (PySpark → Pandas)
         self.top10_por_genero, self.generos = processar_dados(self.df)
         if self.top10_por_genero is None:
+            self.root.destroy()
             return
 
         # ComboBox
@@ -42,6 +49,18 @@ class MainWindow:
         self.ax.set_title(f'Top 10 músicas mais populares de {genero}')
         self.ax.invert_yaxis()
         self.canvas.draw()
+
+    def finalizar(self):
+
+        if messagebox.askokcancel("Sair", "Tem certeza que deseja fechar o programa?"):
+            try:
+                from core.spark_session import get_spark
+                spark = get_spark()
+                spark.stop()
+            except Exception:
+                pass
+            self.root.destroy()
+            os._exit(0)
 
     def run(self):
         self.root.mainloop()

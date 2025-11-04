@@ -1,5 +1,6 @@
 from pyspark.sql import functions as F
 from tkinter import messagebox
+from pyspark.sql.window import Window
 
 def processar_dados(df):
     cols_necessarias = {
@@ -27,8 +28,6 @@ def processar_dados(df):
         F.col(col_map['popularity']).cast('float').alias('popularity')
     )
 
-    # Ordena e pega top 10 por gênero usando Window
-    from pyspark.sql.window import Window
 
     window_spec = Window.partitionBy("genre").orderBy(F.desc("popularity"))
     df_ranked = df.withColumn("rank", F.row_number().over(window_spec))
@@ -37,7 +36,7 @@ def processar_dados(df):
     # Lista de gêneros (coletar para o ComboBox)
     generos = [row["genre"] for row in top10_por_genero.select("genre").distinct().collect()]
 
-    # ⚠️ Converte o resultado para pandas apenas no final (para o matplotlib e tkinter)
+    #  Converte o resultado para pandas apenas no final (para o matplotlib e tkinter)
     top10_por_genero_pd = top10_por_genero.toPandas()
 
     return top10_por_genero_pd, sorted(generos)
