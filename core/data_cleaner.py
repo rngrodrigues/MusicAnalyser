@@ -2,6 +2,7 @@ from pyspark.sql import DataFrame
 
 def limpar_dados(df: DataFrame) -> DataFrame:
 
+
   # Remove linhas onde todas as colunas são nulas
     df = df.na.drop(how="all")
     # Remove duplicatas

@@ -19,7 +19,7 @@ def carregar_arquivo():
     )
 
     if not caminho_arquivo:
-        messagebox.showerror("Erro", "Nenhum arquivo selecionado. O programa será encerrado.")
+        messagebox.showerror("Erro", "Nenhum arquivo selecionado.")
         return None
 
     ext = os.path.splitext(caminho_arquivo)[1].lower()

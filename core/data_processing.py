@@ -28,7 +28,6 @@ def processar_dados(df):
         F.col(col_map['popularity']).cast('float').alias('popularity')
     )
 
-
     window_spec = Window.partitionBy("genre").orderBy(F.desc("popularity"))
     df_ranked = df.withColumn("rank", F.row_number().over(window_spec))
     top10_por_genero = df_ranked.filter(F.col("rank") <= 10).drop("rank")
@@ -36,7 +35,8 @@ def processar_dados(df):
     # Lista de gêneros (coletar para o ComboBox)
     generos = [row["genre"] for row in top10_por_genero.select("genre").distinct().collect()]
 
-    #  Converte o resultado para pandas apenas no final (para o matplotlib e tkinter)
+    #  Converte o resultado para pandas no final (para o matplotlib e tkinter)
     top10_por_genero_pd = top10_por_genero.toPandas()
+
 
     return top10_por_genero_pd, sorted(generos)
