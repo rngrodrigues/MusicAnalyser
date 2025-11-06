@@ -1,9 +1,9 @@
 import tkinter as tk
 
-def abrir_help(parent):
+def abrir_saiba_mais(parent):
     modal = tk.Toplevel(parent)
-    modal.title("Como usar o MusicAnalyser")
-    largura, altura = 420, 300  # aumentei um pouco a altura para o botão caber
+    modal.title("Sobre o projeto")
+    largura, altura = 420, 260
     modal.geometry(f"{largura}x{altura}")
     modal.config(bg="white")
     modal.resizable(False, False)
@@ -28,14 +28,14 @@ def abrir_help(parent):
         font=("Segoe UI", 14, "bold")
     ).pack(pady=(15, 5))
 
-    # Conteúdo do modal
+
     texto = (
-        "Clique em 'Selecionar arquivo' ou 'Alterar arquivo' para carregar seu dataset.\n\n"
-        "O arquivo deve conter colunas correspondentes a:\n\n"
-        "• Gênero\n"
-        "• Nome da música\n"
-        "• Popularidade\n\n"
-        "Após o processamento, selecione um gênero e veja o Top 10!"
+        "O Music Analyser é um projeto acadêmico de Big Data, "
+        "desenvolvido em Python, PySpark, Tkinter e Matplotlib."
+        " Voltado para análise musicais.\n\n"
+        "O objetivo é realizar a análise de grandes volumes de dados"
+        "em diferentes formatos, permitindo visualizar "
+        "informações musicais de forma interativa."
     )
 
     tk.Label(
@@ -45,8 +45,8 @@ def abrir_help(parent):
         fg="black",
         justify="left",
         font=("Segoe UI", 10),
-        wraplength=380
-    ).pack(padx=20, pady=(5, 10))  # diminuí o espaço inferior
+        wraplength=380  # evita o corte do texto
+    ).pack(padx=20, pady=10)
 
     # Botão de fechar
     tk.Button(
@@ -57,6 +57,6 @@ def abrir_help(parent):
         fg="white",
         font=("Segoe UI", 10, "bold"),
         relief="flat",
-        padx=6,
+        padx=4,
         pady=2
-    ).pack(pady=(0, 10))
+    ).pack(pady=10)

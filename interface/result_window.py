@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
-from interface.modal_help import abrir_modal
+from interface.modal_help import abrir_help
 from interface.close_window import finalizar
 from matplotlib import rcParams, font_manager
 
@@ -75,7 +75,7 @@ class ResultWindow:
             cursor="hand2"
         )
         self.link_como_usar.pack(pady=(5, 0))
-        self.link_como_usar.bind("<Button-1>", lambda e: abrir_modal(self.root))
+        self.link_como_usar.bind("<Button-1>", lambda e: abrir_help(self.root))
 
         # ComboBox de gêneros
         self.combo_generos = ttk.Combobox(

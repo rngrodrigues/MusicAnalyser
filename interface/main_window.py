@@ -1,5 +1,6 @@
 import tkinter as tk
-from interface.modal_help import abrir_modal
+from interface.modal_help import abrir_help
+from interface.modal_saiba_mais import abrir_saiba_mais
 from core.data_loader import carregar_arquivo
 from core.data_processing import processar_dados
 from interface.close_window import finalizar
@@ -9,8 +10,15 @@ class MainWindow:
     def __init__(self):
         self.root = tk.Tk()
         self.root.title("MusicAnalyser")
-        self.root.geometry("900x600")
-        self.root.config(bg="white")
+        largura, altura = 1280, 720
+        largura_tela = self.root.winfo_screenwidth()
+        altura_tela = self.root.winfo_screenheight()
+        # Calcula posição para centralizar
+        pos_x = (largura_tela // 2) - (largura // 2)
+        pos_y = (altura_tela // 2) - (altura // 2)
+        # Define posição centralizada
+        self.root.geometry(f"{largura}x{altura}+{pos_x}+{pos_y}")
+
         self.root.protocol("WM_DELETE_WINDOW", lambda: finalizar(self.root))
 
         self.criar_layout_esquerda()
@@ -30,34 +38,34 @@ class MainWindow:
         texto_frame.pack(side="left")
 
         tk.Label(
-            texto_frame, text="Bem-vindo ao MusicAnalyser",
-            font=("Segoe UI", 14, "bold"),
+            texto_frame, text="Bem-vindo ao Music Analyser!",
+            font=("Segoe UI", 18, "bold"),
             fg="white", bg="#0040FF",
             justify="left", anchor="w"
-        ).pack(anchor="w", pady=(10))
+        ).pack(anchor="w", pady=30)
 
         descricao = (
-                "Primeira frase do texto, apenas decorativo ainda.\n"
-                "Segunda frase do texto, apenas decorativo ainda\n"
-                "Terceira frase do texto, apenas decorativo ainda;\n\n"
-                "É necessário conter as colunas:\n"
-                "É necessário conter as colunas: É necessário conteraslunas:\n"
-                "popularidade, nome e gênero. popularidade, ênero.populari.\n"
+            " O Music Analyser é um projeto que permite explorar\n"
+            "e entender melhor como funciona o mundo \n"
+            "músical, por meio de uma análise inteligente dos dados.\n\n"
+            " Ele oferece uma forma simples e interativa de\n"
+            "visualizar as músicas mais populares por gênero,\n"
+            "para descobrir padrões e ter insights valiosos!"
         )
         tk.Label(
             texto_frame, text=descricao,
-            font=("Segoe UI", 10), fg="white", bg="#0040FF",
+            font=("Segoe UI", 12), fg="white", bg="#0040FF",
             justify="left", anchor="w"
         ).pack(anchor="w")
 
         link = tk.Label(
-            texto_frame, text="Como usar?",
+            texto_frame, text="Saiba mais",
             fg="white", bg="#0040FF",
-            font=("Segoe UI", 9, "underline bold"),
+            font=("Segoe UI", 12, "underline bold"),
             cursor="hand2"
         )
-        link.pack(anchor="w", pady=10)
-        link.bind("<Button-1>", lambda e: abrir_modal(self.root))
+        link.pack(anchor="w", pady=30)
+        link.bind("<Button-1>", lambda e: abrir_saiba_mais(self.root))
 
     def criar_layout_direita(self):
         frame_direita = tk.Frame(self.root, bg="white")
@@ -85,7 +93,7 @@ class MainWindow:
             cursor="hand2"
         )
         link_como_usar.place(relx=0.5, rely=0.5 + 0.06, anchor="center")
-        link_como_usar.bind("<Button-1>", lambda e: abrir_modal(self.root))
+        link_como_usar.bind("<Button-1>", lambda e: abrir_help(self.root))
 
     def carregar_dados(self):
         df = carregar_arquivo()
