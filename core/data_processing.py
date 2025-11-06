@@ -1,6 +1,5 @@
-from pyspark.sql import functions as F
+import pandas as pd
 from tkinter import messagebox
-from pyspark.sql.window import Window
 
 def processar_dados(df):
     cols_necessarias = {
@@ -22,21 +21,23 @@ def processar_dados(df):
             return None, None
 
     # Seleciona e renomeia colunas
-    df = df.select(
-        F.col(col_map['genre']).alias('genre'),
-        F.col(col_map['music_name']).alias('track_name'),
-        F.col(col_map['popularity']).cast('float').alias('popularity')
-    )
+    df = df.rename(columns={
+        col_map['genre']: 'genre',
+        col_map['music_name']: 'track_name',
+        col_map['popularity']: 'popularity'
+    })
 
-    window_spec = Window.partitionBy("genre").orderBy(F.desc("popularity"))
-    df_ranked = df.withColumn("rank", F.row_number().over(window_spec))
-    top10_por_genero = df_ranked.filter(F.col("rank") <= 10).drop("rank")
+    # Converte popularidade pra float
+    df['popularity'] = pd.to_numeric(df['popularity'], errors='coerce')
 
-    # Lista de gêneros (coletar para o ComboBox)
-    generos = [row["genre"] for row in top10_por_genero.select("genre").distinct().collect()]
+    # Remove valores nulos
+    df = df.dropna(subset=['genre', 'track_name', 'popularity'])
 
-    #  Converte o resultado para pandas no final (para o matplotlib e tkinter)
-    top10_por_genero_pd = top10_por_genero.toPandas()
+    # Agrupa e pega top 10 por gênero
+    df_sorted = df.sort_values(['genre', 'popularity'], ascending=[True, False])
+    top10_por_genero = df_sorted.groupby('genre').head(10).reset_index(drop=True)
 
+    # Lista de gêneros
+    generos = sorted(top10_por_genero['genre'].unique().tolist())
 
-    return top10_por_genero_pd, sorted(generos)
+    return top10_por_genero, generos

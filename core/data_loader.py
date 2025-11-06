@@ -1,7 +1,6 @@
 from tkinter import filedialog, messagebox
 import os
 import pandas as pd
-from core.spark_session import get_spark
 from core.data_cleaner import limpar_dados
 
 def carregar_arquivo():
@@ -25,47 +24,19 @@ def carregar_arquivo():
     ext = os.path.splitext(caminho_arquivo)[1].lower()
 
     try:
-        spark = get_spark()
-
-        # Leitura do arquivo conforme o tipo
         if ext == ".csv":
-            df = (
-                spark.read
-                .option("header", "true")
-                .option("inferSchema", "true")
-                .option("multiLine", "true")
-                .option("escape", '"')
-                .option("quote", '"')
-                .option("sep", ",")
-                .csv(caminho_arquivo)
-            )
-
+            df = pd.read_csv(caminho_arquivo)
         elif ext == ".tsv":
-            df = (
-                spark.read
-                .option("header", "true")
-                .option("sep", "\t")
-                .csv(caminho_arquivo)
-            )
-
+            df = pd.read_csv(caminho_arquivo, sep="\t")
         elif ext in [".xlsx", ".xls"]:
-            try:
-                pdf = pd.read_excel(caminho_arquivo)
-                df = spark.createDataFrame(pdf)
-            except Exception as e:
-                messagebox.showerror("Erro", f"Falha ao ler o arquivo Excel:\n{e}")
-                return None
-
+            df = pd.read_excel(caminho_arquivo)
         elif ext == ".json":
-            df = spark.read.option("multiline", "true").json(caminho_arquivo)
-
+            df = pd.read_json(caminho_arquivo, lines=False)
         elif ext == ".parquet":
-            df = spark.read.parquet(caminho_arquivo)
-
+            df = pd.read_parquet(caminho_arquivo)
         else:
             messagebox.showerror("Erro", f"Formato de arquivo não suportado: {ext}")
             return None
-
 
         df = limpar_dados(df)
 
