@@ -1,10 +1,12 @@
 import tkinter as tk
-from tkinter import ttk
+
+from tkinter import ttk, filedialog, messagebox
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
+from matplotlib import rcParams, font_manager
 from interface.modal_help import abrir_help
 from interface.close_window import finalizar
-from matplotlib import rcParams, font_manager
+from core.result_download import salvar_resultado
 
 # Caminhos para as fontes Noto
 FONT_PATHS = {
@@ -26,8 +28,9 @@ rcParams['font.family'] = [
     'Noto Sans JP',
     'Noto Sans KR',
     'Noto Sans SC',
-    'DejaVu Sans',  # fallback padrão
+    'DejaVu Sans',
 ]
+
 
 class ResultWindow:
     def __init__(self, root, top10_por_genero, generos, carregar_dados):
@@ -36,11 +39,9 @@ class ResultWindow:
         self.generos = generos
         self.carregar_dados = carregar_dados
 
-        # Remove conteúdo antigo
         for widget in self.root.winfo_children():
             widget.destroy()
 
-        # Captura o clique no X
         self.root.protocol("WM_DELETE_WINDOW", lambda: finalizar(self.root))
 
         self.criar_layout()
@@ -48,16 +49,20 @@ class ResultWindow:
         self.atualizar_grafico()
 
     def criar_layout(self):
-        # Frame superior e botões
         self.frame_top = tk.Frame(self.root, bg="white")
         self.frame_top.pack(fill="x", pady=10)
 
-        self.frame_botoes = tk.Frame(self.frame_top, bg="white")
-        self.frame_botoes.pack(side="left", padx=20, pady=5)
+        # 🔹 Frame da esquerda (Alterar arquivo + Como usar)
+        self.frame_esquerda = tk.Frame(self.frame_top, bg="white")
+        self.frame_esquerda.pack(side="left", padx=20, pady=5, anchor="w")
+
+        # 🔹 Frame da direita (Baixar resultados)
+        self.frame_direita = tk.Frame(self.frame_top, bg="white")
+        self.frame_direita.pack(side="right", padx=20, pady=5, anchor="e")
 
         # Botão Alterar arquivo
         self.botao_alterar = tk.Button(
-            self.frame_botoes, text="Alterar arquivo",
+            self.frame_esquerda, text="Alterar arquivo",
             command=self.carregar_dados,
             bg="#0040FF", fg="white",
             font=("Segoe UI", 10, "bold"),
@@ -69,7 +74,7 @@ class ResultWindow:
 
         # Link "Como usar"
         self.link_como_usar = tk.Label(
-            self.frame_botoes, text="Como usar?",
+            self.frame_esquerda, text="Como usar?",
             fg="#0040FF", bg="white",
             font=("Segoe UI", 9, "underline"),
             cursor="hand2"
@@ -77,7 +82,19 @@ class ResultWindow:
         self.link_como_usar.pack(pady=(5, 0))
         self.link_como_usar.bind("<Button-1>", lambda e: abrir_help(self.root))
 
-        # ComboBox de gêneros
+        # Botão Salvar Resultado
+        self.botao_salvar = tk.Button(
+            self.frame_direita, text="Salvar gráfico",
+            command=self.salvar_resultado,
+            bg="#00AA00", fg="white",
+            font=("Segoe UI", 10, "bold"),
+            relief="flat", padx=10, pady=5, cursor="hand2"
+        )
+        self.botao_salvar.pack()
+        self.botao_salvar.bind("<Enter>", lambda e: self.botao_salvar.config(bg="#008800"))
+        self.botao_salvar.bind("<Leave>", lambda e: self.botao_salvar.config(bg="#00AA00"))
+
+        # Combobox centralizada
         self.combo_generos = ttk.Combobox(
             self.frame_top, values=self.generos,
             font=("Segoe UI", 10), justify="center"
@@ -106,11 +123,9 @@ class ResultWindow:
         self.ax.set_ylabel('Música', fontsize=12)
         self.ax.set_title(f'Top 10 músicas mais populares de {genero}', fontsize=14)
 
-        # Labels usando fallback das fontes Noto
         self.ax.set_yticks(range(len(top10_genero['track_name'])))
         self.ax.set_yticklabels(top10_genero['track_name'], fontsize=10)
 
-        # Valores das barras
         for bar in bars:
             largura = bar.get_width()
             self.ax.text(largura + 1, bar.get_y() + bar.get_height() / 2,
@@ -120,3 +135,8 @@ class ResultWindow:
         self.ax.invert_yaxis()
         plt.tight_layout()
         self.canvas.draw()
+
+    def salvar_resultado(self):
+            genero = self.combo_generos.get()
+            salvar_resultado(self.fig, self.top10_por_genero, genero)
+

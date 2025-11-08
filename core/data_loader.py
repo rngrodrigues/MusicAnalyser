@@ -3,24 +3,31 @@ import os
 import pandas as pd
 from core.data_cleaner import limpar_dados
 
-def carregar_arquivo():
-    caminho_arquivo = filedialog.askopenfilename(
-        title="Selecione o arquivo de dados",
-        filetypes=[
-            ("Todos arquivos de dados", "*.csv *.tsv *.xlsx *.xls *.json *.parquet"),
-            ("CSV", "*.csv"),
-            ("TSV", "*.tsv"),
-            ("Excel", "*.xlsx *.xls"),
-            ("JSON", "*.json"),
-            ("Parquet", "*.parquet"),
-            ("Todos", "*.*")
-        ]
-    )
+def carregar_arquivo(caminho=None):
+    # Se a função for chamada com um caminho direto (ex: arrastar e soltar)
+    if caminho:
+        caminho_arquivo = caminho
+    else:
+        # Abre o seletor de arquivos normalmente
+        caminho_arquivo = filedialog.askopenfilename(
+            title="Selecione o arquivo de dados",
+            filetypes=[
+                ("Todos arquivos de dados", "*.csv *.tsv *.xlsx *.xls *.json *.parquet"),
+                ("CSV", "*.csv"),
+                ("TSV", "*.tsv"),
+                ("Excel", "*.xlsx *.xls"),
+                ("JSON", "*.json"),
+                ("Parquet", "*.parquet"),
+                ("Todos", "*.*")
+            ]
+        )
 
+    # 🔹 Se o usuário clicar em "Cancelar"
     if not caminho_arquivo:
-        messagebox.showerror("Erro", "Nenhum arquivo selecionado.")
+        messagebox.showinfo("Aviso", "Nenhum arquivo selecionado.")
         return None
 
+    # 🔹 Identifica a extensão do arquivo
     ext = os.path.splitext(caminho_arquivo)[1].lower()
 
     try:
