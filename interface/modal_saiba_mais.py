@@ -45,7 +45,7 @@ def abrir_saiba_mais(parent):
         fg="black",
         justify="left",
         font=("Segoe UI", 10),
-        wraplength=380  # evita o corte do texto
+        wraplength=380
     ).pack(padx=20, pady=10)
 
     # Botão de fechar

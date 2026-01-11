@@ -3,7 +3,7 @@ import tkinter as tk
 def abrir_help(parent):
     modal = tk.Toplevel(parent)
     modal.title("Como usar o MusicAnalyser")
-    largura, altura = 420, 300  # aumentei um pouco a altura para o botão caber
+    largura, altura = 420, 300
     modal.geometry(f"{largura}x{altura}")
     modal.config(bg="white")
     modal.resizable(False, False)
@@ -46,9 +46,9 @@ def abrir_help(parent):
         justify="left",
         font=("Segoe UI", 10),
         wraplength=380
-    ).pack(padx=20, pady=(5, 10))  # diminuí o espaço inferior
+    ).pack(padx=20, pady=(5, 10))
 
-    # Botão de fechar
+
     tk.Button(
         modal,
         text="Fechar",

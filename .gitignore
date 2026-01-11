@@ -1,2 +1,5 @@
 main2.py
+music_data_gigante.csv
 datasets_tests/musicas.csv
+build/
+.idea/

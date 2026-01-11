@@ -22,12 +22,12 @@ def carregar_arquivo(caminho=None):
             ]
         )
 
-    # 🔹 Se o usuário clicar em "Cancelar"
+    # Se o usuário clicar em "Cancelar"
     if not caminho_arquivo:
         messagebox.showinfo("Aviso", "Nenhum arquivo selecionado.")
         return None
 
-    # 🔹 Identifica a extensão do arquivo
+    # Identifica a extensão do arquivo
     ext = os.path.splitext(caminho_arquivo)[1].lower()
 
     try:

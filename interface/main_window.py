@@ -73,7 +73,7 @@ class MainWindow:
         frame_direita = tk.Frame(self.root, bg="white")
         frame_direita.pack(side="right", expand=True, fill="both")
 
-        # 🔹 Canvas quadrado
+        # Canvas quadrado
         tamanho = 450  # ← aqui você controla o tamanho do quadrado
         canvas = tk.Canvas(
             frame_direita,
@@ -83,7 +83,7 @@ class MainWindow:
         )
         canvas.place(relx=0.5, rely=0.5, anchor="center")
 
-        # 🔹 Retângulo tracejado (quadrado)
+        # Retângulo tracejado (quadrado)
         margem = 10
         canvas.create_rectangle(
             margem, margem,
@@ -94,11 +94,11 @@ class MainWindow:
             tags="borda"
         )
 
-        # 🔹 Centraliza conteúdo no meio do quadrado
+        # Centraliza conteúdo no meio do quadrado
         conteudo = tk.Frame(canvas, bg="white")
         canvas.create_window(tamanho / 2, tamanho / 2, window=conteudo, anchor="center")
 
-        # 🔹 Botão principal
+        # Botão principal
         botao = tk.Button(
             conteudo, text="Selecionar arquivo",
             command=self.carregar_dados,
@@ -110,10 +110,10 @@ class MainWindow:
         )
         botao.pack(pady=(10, 8))
 
-        botao.bind("<Enter>", lambda e: botao.config(bg="#99BBFF"))
+        botao.bind("<Enter>", lambda e: botao.config(bg="#0030CC"))
         botao.bind("<Leave>", lambda e: botao.config(bg="#0040FF"))
 
-        # 🔹 Texto "(ou arraste aqui)"
+        # Texto "(ou arraste aqui)"
         tk.Label(
             conteudo,
             text="Ou solte arquivos aqui",
@@ -122,7 +122,7 @@ class MainWindow:
             font=("Segoe UI", 10, "italic")
         ).pack(pady=(0, 5))
 
-        # 🔹 Link "Como usar?"
+        # Link "Como usar?"
         link_como_usar = tk.Label(
             conteudo,
             text="Como usar?",
@@ -135,24 +135,24 @@ class MainWindow:
         link_como_usar.bind("<Button-1>", lambda e: abrir_help(self.root))
 
         canvas.drop_target_register(DND_FILES)
-        # 🌀 Efeitos visuais ao arrastar arquivo
+        # Efeitos visuais ao arrastar arquivo
         def ao_entrar(event):
-            # remove o tracejado e muda a cor pra azul clara
+
             canvas.itemconfig("borda", dash=(), outline="#0040FF", width=3)
         def ao_sair(event):
-            # volta pro estilo original tracejado
-            canvas.itemconfig("borda", dash=(6, 4), outline="#339CFF", width=2)
-        # eventos de drag & drop
+
+            canvas.itemconfig("borda", dash=(6, 4), outline="#99D1FF", width=2)
+
         canvas.dnd_bind("<<DropEnter>>", ao_entrar)
         canvas.dnd_bind("<<DropLeave>>", ao_sair)
         canvas.dnd_bind("<<Drop>>", self.ao_soltar_arquivo)
 
     def ao_soltar_arquivo(self, event):
-            caminho_arquivo = event.data.strip("{}")  # remove chaves e espaços
+            caminho_arquivo = event.data.strip("{}")
             print("Arquivo recebido:", caminho_arquivo)
 
             # você pode reutilizar suas funções aqui:
-            df = carregar_arquivo(caminho_arquivo)  # ajustar sua função pra aceitar caminho direto
+            df = carregar_arquivo(caminho_arquivo)
             if df is None:
                 return
             top10_por_genero, generos = processar_dados(df)
@@ -172,7 +172,7 @@ class MainWindow:
             length=400,
             mode="determinate"
         )
-        progress.place(relx=0.5, rely=0.5, anchor="center")  # 🔹 exatamente no centro
+        progress.place(relx=0.5, rely=0.5, anchor="center")
         progress["value"] = 0
         self.root.update_idletasks()
 
