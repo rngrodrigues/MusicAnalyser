@@ -1,56 +1,105 @@
+import csv
 import os
 import random
 import string
-import pandas as pd
-from tqdm import tqdm
+import sys
+import time
 
-# ================= CONFIGURAÇÕES =================
-ARQUIVO_SAIDA = "music_data_gigante.parquet"
-LINHAS_TOTAIS = 25_000_000  # aproximadamente ~11GB de RAM, seguro para 16GB
-LINHAS_POR_BLOCO = 1_000_000
-SEED = 42
-# =================================================
-
-random.seed(SEED)
+# ===============================
+# CONFIGURAÇÕES
+# ===============================
+ARQUIVO_SAIDA = "1bilhao.csv"
+TOTAL_LINHAS = 1_000_000_000   # total de linhas
+BATCH_PRINT = 100_000        # frequência de update da barra
 
 GENEROS = [
-    "Pop", "Rock", "Hip Hop", "Jazz", "Classical",
-    "Electronic", "Reggae", "Metal", "Blues", "Country"
+    "Rock", "Pop", "Hip-Hop", "Jazz", "Blues",
+    "Electronic", "Classical", "Reggae",
+    "Country", "Metal"
 ]
 
-def gerar_nome_musica():
-    return ''.join(random.choices(string.ascii_letters + " ", k=random.randint(8, 25))).strip()
+TOP_POPULARIDADES = [90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100]  # valores únicos por gênero
+TOP_HITS_POR_GENERO = len(TOP_POPULARIDADES)  # 10 top hits por gênero
 
-def gerar_popularidade():
-    return random.randint(0, 100)
+# ===============================
+# FUNÇÕES AUXILIARES
+# ===============================
+def gerar_nome_musica(i):
+    """Gera um nome aleatório para a música"""
+    return f"Track_{i}_{''.join(random.choices(string.ascii_letters, k=5))}"
 
-def main():
-    blocos = []
-    blocos_gerados = 0
-    total_blocos = (LINHAS_TOTAIS // LINHAS_POR_BLOCO) + 1
+def barra_progresso(atual, total, inicio):
+    """Mostra barra de progresso no console"""
+    progresso = atual / total
+    largura = 40
+    preenchido = int(largura * progresso)
+    barra = "█" * preenchido + "-" * (largura - preenchido)
+    percentual = progresso * 100
 
-    with tqdm(total=LINHAS_TOTAIS, unit="linhas", dynamic_ncols=True, desc="Gerando Parquet") as pbar:
-        while blocos_gerados < total_blocos:
-            # Calcula quantas linhas gerar neste bloco
-            linhas_no_bloco = min(LINHAS_POR_BLOCO, LINHAS_TOTAIS - blocos_gerados * LINHAS_POR_BLOCO)
+    tempo_decorrido = time.time() - inicio
+    velocidade = atual / tempo_decorrido if tempo_decorrido > 0 else 0
+    restantes = (total - atual) / velocidade if velocidade > 0 else 0
 
-            df = pd.DataFrame({
-                "genre": [random.choice(GENEROS) for _ in range(linhas_no_bloco)],
-                "track_name": [gerar_nome_musica() for _ in range(linhas_no_bloco)],
-                "popularity": [gerar_popularidade() for _ in range(linhas_no_bloco)]
-            })
+    sys.stdout.write(
+        f"\r[{barra}] {percentual:6.2f}% | "
+        f"{atual:,}/{total:,} linhas | "
+        f"ETA: {int(restantes)}s"
+    )
+    sys.stdout.flush()
 
-            blocos.append(df)
-            blocos_gerados += 1
-            pbar.update(linhas_no_bloco)
+# ===============================
+# GERAÇÃO DO CSV
+# ===============================
+def gerar_csv():
+    inicio = time.time()
+    linhas_geradas = 0
+    id_musica = 1
 
-    print("\n🔹 Concatenando blocos e gravando arquivo Parquet único...")
-    df_final = pd.concat(blocos, ignore_index=True)
-    df_final.to_parquet(ARQUIVO_SAIDA, engine="pyarrow", index=False, compression="snappy")
+    with open(ARQUIVO_SAIDA, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["genre", "track_name", "popularity"])
 
-    tamanho_final = os.path.getsize(ARQUIVO_SAIDA) / (1024**3)
-    print(f"\n✅ Geração finalizada! Arquivo: {ARQUIVO_SAIDA}")
-    print(f"Tamanho final no disco: {tamanho_final:.2f} GB")
+        # --------------------------
+        # 1️⃣ Gerar os top hits obrigatórios (uma música por popularidade por gênero)
+        # --------------------------
+        for genero in GENEROS:
+            for pop in TOP_POPULARIDADES:
+                writer.writerow([
+                    genero,
+                    gerar_nome_musica(id_musica),
+                    pop
+                ])
+                id_musica += 1
+                linhas_geradas += 1
+                if linhas_geradas % BATCH_PRINT == 0:
+                    barra_progresso(linhas_geradas, TOTAL_LINHAS, inicio)
 
+        # --------------------------
+        # 2️⃣ Gerar o restante das linhas (popularidade 1 a 89, repetível)
+        # --------------------------
+        while linhas_geradas < TOTAL_LINHAS:
+            genero = random.choice(GENEROS)
+            popularidade = round(random.uniform(1, 89), 2)
+
+            writer.writerow([
+                genero,
+                gerar_nome_musica(id_musica),
+                popularidade
+            ])
+            id_musica += 1
+            linhas_geradas += 1
+
+            if linhas_geradas % BATCH_PRINT == 0:
+                barra_progresso(linhas_geradas, TOTAL_LINHAS, inicio)
+
+    barra_progresso(TOTAL_LINHAS, TOTAL_LINHAS, inicio)
+    print("\n✅ CSV gerado com sucesso!")
+    print(f"📁 Arquivo: {os.path.abspath(ARQUIVO_SAIDA)}")
+    print(f"⏱️ Tempo total: {int(time.time() - inicio)}s")
+
+
+# ===============================
+# MAIN
+# ===============================
 if __name__ == "__main__":
-    main()
+    gerar_csv()
