@@ -20,7 +20,7 @@ MAX_JSON = 1_000_000
 MAX_EXCEL = 500_000
 
 BATCH_PRINT = 100_000
-PARQUET_BATCH = 500_000
+PARQUET_BATCH = 150_000
 
 GENEROS = [
     "Rock", "Pop", "Hip-Hop", "Jazz", "Blues",
