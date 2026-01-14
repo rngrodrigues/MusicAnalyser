@@ -1,6 +1,6 @@
 main2.py
 gerar_dataset.py
-datasets_tests/musicas.csv
-datasets_tests/contador_linhas.py
+dataset_tests/
+dist/
 build/
 .idea/
