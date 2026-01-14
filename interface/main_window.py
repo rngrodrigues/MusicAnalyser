@@ -2,6 +2,8 @@ from tkinterdnd2 import TkinterDnD, DND_FILES
 import tkinter as tk
 from tkinter import ttk
 import threading
+import sys
+import os
 
 from interface.modal_help import abrir_help
 from interface.modal_saiba_mais import abrir_saiba_mais
@@ -10,12 +12,32 @@ from core.data_processing import processar_dados
 from interface.close_window import finalizar
 from interface.result_window import ResultWindow
 
+# -----------------------------
+# Função para PyInstaller
+# -----------------------------
+def resource_path(relative_path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
+
 
 class MainWindow:
     def __init__(self):
+        # -----------------------------
+        # Janela principal
+        # -----------------------------
         self.root = TkinterDnD.Tk()
         self.root.title("MusicAnalyser")
 
+        # -----------------------------
+        # Ícone da janela Tkinter
+        # -----------------------------
+        icon_path = resource_path("musica.ico")
+        self.root.iconbitmap(icon_path)
+
+        # -----------------------------
+        # Centralizar tela
+        # -----------------------------
         largura, altura = 1280, 720
         largura_tela = self.root.winfo_screenwidth()
         altura_tela = self.root.winfo_screenheight()
@@ -27,6 +49,9 @@ class MainWindow:
 
         self.progress = None
 
+        # -----------------------------
+        # Layouts
+        # -----------------------------
         self.criar_layout_esquerda()
         self.criar_layout_direita()
 
@@ -58,8 +83,9 @@ class MainWindow:
             " O Music Analyser é um projeto que permite explorar\n"
             "e entender melhor como funciona o mundo musical\n"
             "por meio de análise eficiente de grandes volumes de dados.\n\n"
-            " Visualize as músicas mais populares por gênero\n"
-            "sem estourar memória, mesmo com arquivos gigantes."
+            " Visualize as músicas mais populares de cada gênero\n"
+            "de forma rápida e otimizada, garantindo alto\n"
+            "desempenho mesmo ao lidar com arquivos de grande porte."
         )
 
         tk.Label(

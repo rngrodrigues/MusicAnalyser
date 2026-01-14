@@ -1,4 +1,11 @@
 import tkinter as tk
+import sys
+import os
+
+def resource_path(relative_path):
+    if hasattr(sys, "_MEIPASS"):
+        return os.path.join(sys._MEIPASS, relative_path)
+    return os.path.join(os.path.abspath("."), relative_path)
 
 def abrir_help(parent):
     modal = tk.Toplevel(parent)
@@ -9,6 +16,12 @@ def abrir_help(parent):
     modal.resizable(False, False)
     modal.transient(parent)
     modal.grab_set()
+
+    icon_path = resource_path("musica.ico")
+    try:
+        modal.iconbitmap(icon_path)
+    except Exception:
+        pass  # evita crash se rodar em Linux/macOS
 
     # Centraliza o modal
     root_x = parent.winfo_x()
@@ -47,7 +60,6 @@ def abrir_help(parent):
         font=("Segoe UI", 10),
         wraplength=380
     ).pack(padx=20, pady=(5, 10))
-
 
     tk.Button(
         modal,

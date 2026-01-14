@@ -1,6 +1,5 @@
 main2.py
 gerar_dataset.py
-dataset_tests/
-dist/
+datasets_tests/
 build/
 .idea/

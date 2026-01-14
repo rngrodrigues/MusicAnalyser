@@ -1,9 +1,7 @@
 from tkinter import filedialog, messagebox
 import os
 
-EXTENSOES_SUPORTADAS = {
-    ".csv", ".tsv", ".xlsx", ".xls", ".json", ".parquet"
-}
+EXTENSOES_SUPORTADAS = {".csv", ".tsv", ".xlsx", ".xls", ".json", ".parquet"}
 
 def carregar_arquivo(caminho=None):
     if caminho:
@@ -21,7 +19,8 @@ def carregar_arquivo(caminho=None):
         messagebox.showinfo("Aviso", "Nenhum arquivo selecionado.")
         return None
 
-    ext = os.path.splitext(caminho_arquivo)[1].lower()
+    # Pega a extensão final, remove espaços, converte para minúsculo
+    ext = os.path.splitext(caminho_arquivo)[1].strip().lower()
 
     if ext not in EXTENSOES_SUPORTADAS:
         messagebox.showerror(
