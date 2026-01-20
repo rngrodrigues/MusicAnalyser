@@ -2,9 +2,15 @@
 <p align="center"> ↓ Acesse o projeto </p>
 <p align="center">
   <a href="https://musicanalyser.vercel.app/">
-    <img src="https://img.shields.io/badge/deploy-online-green?style=for-the-badge&logo=vercel" alt="Demonstração Music Analyser" />
+    <img src="https://img.shields.io/badge/demo-online-green?style=for-the-badge&logo=vercel" alt="Demonstração Music Analyser" />
   </a>
 </p>
+
+## Prévia
+
+![Tela inicial](https://github.com/rngrodrigues/MusicAnalyser/blob/main/img/inicio.png?raw=true)
+
+![Tela de resultado](https://github.com/rngrodrigues/MusicAnalyser/blob/main/img/grafico.png?raw=true)
 
 ## Visão Geral
 
@@ -123,12 +129,6 @@ MusicAnalyser/
 └── README.md
 ```
 ---
-
-## Prévia
-
-![Tela inicial](https://github.com/rngrodrigues/MusicAnalyser/blob/main/img/inicio.png?raw=true)
-
-![Tela de resultado](https://github.com/rngrodrigues/MusicAnalyser/blob/main/img/grafico.png?raw=true)
 
 ## Como Rodar o Projeto
 
